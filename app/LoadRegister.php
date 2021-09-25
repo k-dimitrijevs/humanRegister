@@ -5,6 +5,7 @@ namespace App;
 use League\Csv\Reader;
 use League\Csv\Statement;
 use League\Csv\TabularDataReader;
+use League\Csv\Writer;
 
 
 class LoadRegister
@@ -24,4 +25,11 @@ class LoadRegister
     {
         return Statement::create()->process($this->csvReader);
     }
+
+    public function headers(): array
+    {
+        return $this->csvReader->getHeader();
+    }
+
+
 }

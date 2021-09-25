@@ -13,9 +13,8 @@ $humanData = $humanRegister->getRecords();
 if (isset($_POST['add']))
 {
     $writer = Writer::createFromPath("register.csv", 'a+');
-    $writer->setNewline("\r\n");
     $writer->insertOne([
-       $_POST['FirstName'],     
+       $_POST['FirstName'],
        $_POST['LastName'],
        $_POST['PersonalCode'],
        $_POST['AdditionalInfo']
@@ -59,7 +58,18 @@ if (isset($_POST['add']))
                     }
                 }
                 echo "<p style='padding-top: 30px'>{$output}</p>";
+                if ($personData['PersonalCode'] === $_POST['PersonalCode'])
+                {
+                    echo "<form method='post'><button type='submit' name='delete' class='btn btn-danger'>DELETE</button></form>";
+
+                    if (isset($_POST['delete']))
+                    {
+
+                        header("Refresh: 0");
+                    }
+                }
             }
+
             ?>
         </div>
     </div>
@@ -95,6 +105,13 @@ if (isset($_POST['add']))
 
     <div class="row">
         <table class="table">
+            <thead>
+            <tr>
+            <?php foreach ($humanRegister->headers() as $header): ?>
+                    <th><?php echo $header; ?></th>
+            <?php endforeach; ?>
+            </tr>
+            </thead>
             <tbody>
             <?php foreach ($humanData as $personData): ?>
                 <tr>
