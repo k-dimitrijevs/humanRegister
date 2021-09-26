@@ -3,7 +3,6 @@
 require_once "vendor/autoload.php";
 
 use App\LoadRegister;
-use App\AddPerson;
 use League\Csv\Writer;
 
 $humanRegister = new LoadRegister("register.csv");
@@ -12,13 +11,10 @@ $humanData = $humanRegister->getRecords();
 
 if (isset($_POST['add']))
 {
-    $writer = Writer::createFromPath("register.csv", 'a+');
-    $writer->insertOne([
-       $_POST['FirstName'],
-       $_POST['LastName'],
-       $_POST['PersonalCode'],
-       $_POST['AdditionalInfo']
-    ]);
+    try {
+        $humanRegister->writeData($_POST['FirstName'], $_POST['LastName'], $_POST['PersonalCode'], $_POST['AdditionalInfo']);
+    } catch (\League\Csv\CannotInsertRecord $e) {
+    }
     header("Refresh: 0");
 }
 
@@ -51,16 +47,20 @@ if (isset($_POST['add']))
                 {
                     if ($personData['PersonalCode'] === $_POST['PersonalCode'])
                     {
-                        $output = "{$personData['FirstName']} {$personData['LastName']} {$personData['PersonalCode']} {$personData['AdditionalInfo']}";
+                        $output = "{$personData['FirstName']} {$personData['LastName']} <br>
+                         {$personData['PersonalCode']} <br>
+                         {$personData['AdditionalInfo']}";
                         break;
                     } else {
                         $output = "Person with that personal code does not exist in register";
                     }
                 }
-                echo "<p style='padding-top: 30px'>{$output}</p>";
+                echo "<p style='padding-left: 50px'>{$output}</p>";
                 if ($personData['PersonalCode'] === $_POST['PersonalCode'])
                 {
-                    echo "<form method='post'><button type='submit' name='delete' class='btn btn-danger'>DELETE</button></form>";
+                    echo "<form style='padding-left: 50px' method='post'>
+                              <button type='submit' name='delete' class='btn btn-danger'>DELETE</button>
+                          </form>";
 
                     if (isset($_POST['delete']))
                     {
